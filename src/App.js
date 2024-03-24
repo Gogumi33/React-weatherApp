@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import WeatherBox from './components/WeatherBox';
 import WeatherButton from './components/WeatherButton';
+import ClipLoader from "react-spinners/ClipLoader";
 
 let API_key = "d54ee034a5e3c16000fbc86b5f4e742e";
 
@@ -16,9 +17,13 @@ let API_key = "d54ee034a5e3c16000fbc86b5f4e742e";
 
 function App() {
   // weather정보를 넣어두기 위한 state 생성
+  // App.js가 필요한 모~든 state들을 싹 다 쥐고있고, 필요할 때 props로써 함수를 자식들에게 보낸다.
   const [weather, setWeather] = useState(null);
+  const [city, setCity] = useState('');
+  const [loading, setLoading] = useState(false);
+
   // array 만드는 이유? 만약에 도시가 10000개라면... 그냥 코드 1줄로 끝내버리자.
-  const cities = ['Seoul', 'Busan', 'Dokyo', 'New York'];
+  const cities = ['Seoul', 'Busan', 'Tokyo', 'New York'];
 
   const getCurrentLocation = () => {
     // 현재 위치 받아오기
@@ -31,23 +36,59 @@ function App() {
 
   const getWeatherByCurrentLocation = async(lat, lon) => { // fetch 쓰려면 async(비동기)처리 필수!
     let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&units=metric`;
+    setLoading(true);
     let response = await fetch(url);
     let data = await response.json();
     // console.log("data", data);
 
     setWeather(data);
+    setLoading(false);
+  }
+
+  const getWeatherByCity = async() => {
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&units=metric`;
+    setLoading(true);
+    let response = await fetch(url);
+    let data = await response.json();
+    //console.log("data당", data);
+
+    setWeather(data);
+    setLoading(false);
+  }
+
+  const changeCity = (city) => {
+    if(city === "current"){
+      setCity('');
+    }else{
+      setCity(city);
+    }
   }
 
   useEffect(()=>{
-    getCurrentLocation()
-  }, []) // []배열에 아무 값도 안주면 didMount처럼 발동을 한다.
+    if(city == ""){
+      getCurrentLocation()
+    }else{
+      getWeatherByCity();
+    }
+  }, [city]) // []배열에 아무 값도 안주면 didMount처럼 발동을 한다.
+
+  // useEffect(()=>{ // componentDidUpdate역할.. 계속 주시하고 있다가 city가 바뀌면 이 함수 호출.
+  //   getWeatherByCity()
+  // }, [city])
 
   return (
     <div>
-      <div className="container">
-        <WeatherBox weather={weather} />
-        <WeatherButton cities={cities} />
-      </div>
+      {loading ? (
+        // 로딩창 UI
+        <div className="container">
+          <ClipLoader color="black" loading={loading} size={150} aria-label="Loading Spinner" data-testid="loader" />
+        </div>
+      ) : (
+        <div className="container">
+          <WeatherBox weather={weather} />
+          <WeatherButton cities={cities} changeCity={changeCity} selectedCity={city} /> {/* 함수도 props로 보내줄 수 있다! */}
+        </div>
+      )}
     </div>
   );
 }

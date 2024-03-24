@@ -14,7 +14,7 @@ body {
   flex-direction: column; /* flexbox는 기본 가로정렬이기 때문 */
 }
 .weather-box {
-  border: 3px solid white;
+  border: 2px solid black;
   padding: 50px;
   border-radius: 30px;
   background-color: azure;

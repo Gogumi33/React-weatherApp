@@ -10,9 +10,9 @@ const WeatherBox = ({weather}) => { // ES6 문법 - 내가 갖고오고 싶은 �
     <div className="weather-box">
       {/* 처음에는 null값이기 때문에 반드시 조건부를 하나 더 걸어줘서 걸러줘야함! */}
       {/* {weather?.name}도 가능하다. */}
-      <div className="location">{weather && weather.name}</div>
-      <h2>{currentTemp}℃ / {fahrenheit.toFixed(1)}℉</h2>
-      <h3>{weather?.weather[0].description}</h3>
+      <div className="location">🪐 {weather && weather.name}</div>
+      <h2>🌡️ {currentTemp}℃ / {fahrenheit.toFixed(1)}℉</h2>
+      <h3>🌞 {weather?.weather[0].description}</h3>
     </div>
   )
 }
