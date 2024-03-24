@@ -21,6 +21,7 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
+  const [apiError, setAPIError] = useState("");
 
   // array 만드는 이유? 만약에 도시가 10000개라면... 그냥 코드 1줄로 끝내버리자.
   const cities = ['Seoul', 'Busan', 'Tokyo', 'New York'];
@@ -35,25 +36,36 @@ function App() {
   }
 
   const getWeatherByCurrentLocation = async(lat, lon) => { // fetch 쓰려면 async(비동기)처리 필수!
-    let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&units=metric`;
-    setLoading(true);
-    let response = await fetch(url);
-    let data = await response.json();
-    // console.log("data", data);
+    try{
+      let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}&units=metric`;
+      setLoading(true);
+      let response = await fetch(url);
+      let data = await response.json();
+      // console.log("data", data);
 
-    setWeather(data);
-    setLoading(false);
+      setWeather(data);
+      setLoading(false);
+    }catch(err){
+      setAPIError(err.message);
+      setLoading(false);
+    }
   }
 
   const getWeatherByCity = async() => {
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&units=metric`;
-    setLoading(true);
-    let response = await fetch(url);
-    let data = await response.json();
-    //console.log("data당", data);
+    try{
+      let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&units=metric`;
+      setLoading(true);
+      let response = await fetch(url);
+      let data = await response.json();
+      //console.log("data당", data);
 
-    setWeather(data);
-    setLoading(false);
+      setWeather(data);
+      setLoading(false)
+    }catch(err){
+      console.log(err);
+      setAPIError(err.message);
+      setLoading(false);
+    }
   }
 
   const changeCity = (city) => {
